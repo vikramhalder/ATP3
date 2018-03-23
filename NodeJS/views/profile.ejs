@@ -1,0 +1,152 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("headerAuth.ejs");-%><%}%>
+<%  if(user == null){%><%-include("headerUnaut.ejs");-%><%}%> 
+<div class="container">
+    <div class="col-sm-6">
+        <div class="row" style="padding:5px 20px">  
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#Genarel">Genarel</a></li>
+                <li><a data-toggle="tab" href="#Security">Security</a></li> 
+            </ul> 
+            <div class="tab-content">
+                <div id="Genarel" class="tab-pane fade in active">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            Name: <%= user[0].fname %> <%= user[0].fname %>
+                            <input type="submit" style="float: right;" class="btn btn-default" value="edit" onclick='clickHS("nameEdit")'><br>
+                            <div id="nameEdit" style="display:none;margin:10px 0px">
+                                <div class="form-group"><input id="fname" class="form-control" value="<%= user[0].fname %>" placeholder="First Name" /></div>
+                                <div class="form-group"><input id="lname" class="form-control" value="<%= user[0].lname %>" placeholder="Last Name" /></div>
+                                <input type="submit" class="btn btn-info" value="Save" onclick='save("name")' />
+                                <input type="submit" class="btn btn-warning" onclick='clickHS("nameEdit")' value="Cancel" />
+                            </div> 
+                        </div><hr />
+
+                        <div class="col-sm-12">
+                            Username: <%= user[0].username %>
+                            <input type="submit" style="float: right;" class="btn btn-default" value="edit" onclick='clickHS("usernameEdit")'><br>
+                            <div id="usernameEdit" style="display:none;margin:10px 0px">
+                                <div class="form-group"><input id="username" class="form-control" value="<%= user[0].username %>" placeholder="Username" /></div>
+                                <input type="submit" class="btn btn-info" value="Save" onclick='save("username")'/>
+                                <input type="submit" class="btn btn-warning" onclick='clickHS("usernameEdit")' value="Cancel" />
+                            </div> 
+                        </div><hr /><hr />
+
+                        <div class="col-sm-12">
+                            Email: <%= user[0].email %>
+                            <input type="submit" style="float: right;" class="btn btn-default" value="edit" onclick='clickHS("emailEdit")'><br>
+                            <div id="emailEdit" style="display:none;margin:10px 0px">
+                                <div class="form-group"><input id="email" class="form-control" value="<%= user[0].email %>" placeholder="Email" /></div>
+                                <input type="submit" class="btn btn-info" value="Save" onclick='save("email")' />
+                                <input type="submit" class="btn btn-warning" onclick='clickHS("emailEdit")' value="Cancel" />
+                            </div>
+                        </div><hr /><hr />
+
+                        <div class="col-sm-12">
+                            Address: <%= user[0].location %>
+                            <input type="submit" style="float: right;" class="btn btn-default" value="edit" onclick='clickHS("locationEdit")'><br>
+                            <div id="locationEdit" style="display:none;margin:10px 0px">
+                                <div class="form-group"><input id="location" class="form-control" value="<%= user[0].location %>" placeholder="Email" /></div>
+                                <input type="submit" class="btn btn-info" value="Save" onclick='save("location")' />
+                                <input type="submit" class="btn btn-warning" onclick='clickHS("locationEdit")' value="Cancel" />
+                            </div>
+                        </div><hr /><hr />
+                    </div> 
+                    Role: <kbd><%= user[0].type %></kbd><br /><br />
+                    Area: <kbd><%= user[0].area %></kbd>
+                </div>
+                <div id="Security" class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="message">
+
+                            </div>
+                            <h4>Password Change</h4>
+                            <div class="form-group"><input type="password" id="passwordCur" class="form-control" placeholder="Current Password" /></div>
+                            <div class="form-group"><input type="password" id="passwordNew" class="form-control" placeholder="New Password" /></div>
+                            <div class="form-group"><input type="password" id="passwordAgain" class="form-control" placeholder="Again Password" /></div>
+                            <input type="submit" class="btn btn-info" value="Change" onclick='passwordChange()' />
+                             
+                        </div><hr />
+                    </div>
+                    <div id="commentview">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6"> 
+        <img width="250" id="profileI" /><script>$("#profileI").attr("src", ImageExist("user", "user<%- user[0].id %>.png"));</script>
+        <form method="post" id="form1" name="form1" enctype="multipart/form-data">
+            <br />
+            <label class="btn btn-warning">
+                Browse <input type="file" name="file" id="file" style="display: none;">
+            </label>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    var fname="<%= user[0].fname %>";
+    var lname="<%= user[0].lname %>";
+    var username="<%= user[0].username %>";
+    var email="<%= user[0].email %>";
+    var address="<%= user[0].location %>"; 
+    
+    $("#file").change(function () { 
+        var data = new FormData();
+        var files = $("#file").get(0).files;
+        if (files.length > 0) {
+            data.append("file", files[0]);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/people/imgupload",
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (data) {
+                console.log(data);
+                if (/^user[0-9]{1,10}.png$/.exec(data) !== null) {
+                    $('#profileI').attr('src', "/img/user/" + data); 
+                } else {
+                    alert("Something Error Try Again");
+                }
+            }
+        }); 
+    });
+    function save(coloum) {
+        fname    = (coloum == "name") ? $("#fname").val() : fname;
+        lname    = (coloum == "name") ? $("#lname").val() : lname;
+        username = (coloum == "username") ? $("#username").val() : username;
+        email    = (coloum == "email") ? $("#email").val() : email;
+        address = (coloum == "location") ? $("#location").val() : address;
+
+        $.post("/people/updateprofile",{fname: fname,lname: lname,username: username,email: email,location: address,},function (data, status) {
+            if (status == "success") {
+                if (data == "ok") {
+                    redirect("/profile");
+                } else {
+                    console.log(data);
+                }
+            }
+        }); 
+    }
+    function passwordChange() { 
+        $.post("/people/updatepassword",
+        { 
+            passwordCur: $("#passwordCur").val(),
+            passwordNew: $("#passwordNew").val(),
+            passwordAgain: $("#passwordAgain").val(),
+        },
+        function (data, status) {
+            if (status == "success") {
+                if (data == "ok") {
+                    $("#message").html('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Password Change successfully</div>');
+                } else {
+                    $("#message").html('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+data+'</div>');
+                }
+            }
+        });
+    }
+</script>

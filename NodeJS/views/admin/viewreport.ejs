@@ -1,0 +1,228 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",{user: user});-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%>  
+    
+<div class="container">
+    <div class="container"> 
+        <div class="col-md-6">
+            <div class="col-md-11" id="proBuyByCat" style="height: 300px;">
+
+            </div>   
+            <div class="col-md-11" id="orderByDate" style="height: 300px;">
+
+            </div>
+        </div>   
+        <div class="col-md-6">
+            <div class="col-md-11" id="payMethodUse" style="height: 600px;">
+
+            </div>
+        </div>
+        <div class="col-md-12">
+            <br />
+            <div class="col-md-12" id="all" style="height: 200px;">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script> 
+    $.get("/api/product/proBuyByCat", function (data) {
+        var arr = []; 
+        JSON.parse(JSON.stringify(data)).forEach(function (val) {
+            var c = 0; var a = 0;
+            JSON.parse(JSON.stringify(data)).forEach(function (ar) {
+                if (val.label == ar.label) { c++; }
+            }); 
+            arr.forEach(function (ar) {
+                if (val.label == ar.label) { a++; }
+            }); 
+            if (a < 1) { 
+                arr.push({ label: val.label,y:c});
+            } 
+        });
+        new CanvasJS.Chart("proBuyByCat", {
+            title: {
+                text: "Product Buy By Catagory"
+            },
+            data: [{
+                type: "column",
+                dataPoints: arr
+            }]
+        }).render();
+    });
+    $.get("/api/product/payMethodUse", function (data) {
+        var arr = [];
+        var taka = [];
+        var arrNew = [];
+        JSON.parse(JSON.stringify(data)).forEach(function (val) {
+            var c = 0; var a = 0; var t = 0; var avgC = 0; var avgT = 0;
+            JSON.parse(JSON.stringify(data)).forEach(function (ar) {
+                if (val.payment_type == ar.payment_type) { c++; t += ar.amount; }
+                avgC++; avgT += ar.amount
+            });
+            arr.forEach(function (ar) { 
+                if (val.payment_type == ar.label) { a++; }
+            });
+            if (a < 1) { 
+                arr.push({ label: val.payment_type, y: (c / avgC) * 100 });
+                taka.push({ label: val.payment_type, y: (t / avgT) * 100 });
+            }
+        }); 
+        
+        new CanvasJS.Chart("payMethodUse", {
+            title: {
+                text: "Payment Method Use"
+            },
+            axisY: { 
+                maximum: 100,
+                suffix: "%"
+            },
+            axisX: {
+                valueFormatString: "DD MMM"
+            },
+            data: [
+                {
+                    type: "column",
+                    name: "Pament Method",
+                    showInLegend: true,
+                    dataPoints: arr
+                },
+                {
+                    type: "column",
+                    name: "Amount",
+                    showInLegend: true,
+                    dataPoints: taka
+                }
+            ]
+        }).render();
+    });
+    $.get("/api/product/orderByDate", function (data) {
+        var arr = [];
+        var arrNew = [];
+        var count = 0;
+        var count2 = 0;
+        JSON.parse(JSON.stringify(data)).forEach(function (val) {
+            var c = 0; var a = 0; count++;
+            JSON.parse(JSON.stringify(data)).forEach(function (ar) {
+                if (val.order_date == ar.order_date) { c++; }
+            });
+            arr.forEach(function (ar) {
+                if (val.order_date == ar.order_date) { a++; }
+            });
+            if (a < 1) {
+                arr.push({ label: val.order_date, y: c });
+            }
+        });
+
+        arr.forEach(function (val) {
+            var c = 0; var a = 0;
+            arr.forEach(function (ar) {
+                if (val.label == ar.label) { c++; }
+            });
+            arrNew.forEach(function (ar) {
+                if (val.label == ar.label) { a++; }
+            });
+            if (a < 1) {
+                count2++;
+                arrNew.push({ label: val.label, y: val.y });
+            }
+        });
+        new CanvasJS.Chart("orderByDate", {
+            title: {
+                text: "Product Buy By Date"
+            },
+            axisY: {
+                title: "Product By",  
+                stripLines: [{
+                    value: count / count2,
+                    label: "Average " + (count / count2)
+                }]
+            },
+            data: [{
+                type: "line",
+                dataPoints: arrNew
+            }]
+        }).render();
+        console.log(arrNew)
+    });
+    $.get("/api/product/orderByDate", function (data) {
+        var arr = [];
+        var arrNew = [];
+        var delivering = [];
+        var complete = [];
+        var all = [];
+        JSON.parse(JSON.stringify(data)).forEach(function (val) {
+            var c = 0; var a = 0;  
+            JSON.parse(JSON.stringify(data)).forEach(function (ar) {
+                if (val.order_date == ar.order_date) { c++; }
+            });
+            arr.forEach(function (ar) {
+                if (val.order_date == ar.order_date) { a++; }
+            });
+            if (a < 1) {
+                val['y'] = c;
+                arr.push(val);
+            }
+        });
+
+        arr.forEach(function (val) {
+            var c = 0; var a = 0;
+            arr.forEach(function (ar) {
+                if (val.order_date == ar.order_date) { c++; }
+            });
+            arrNew.forEach(function (ar) { 
+                if (val.order_date == ar.label) { a++; }
+            });
+            if (a < 1) {
+                console.log(c)
+                arrNew.push({ label: val.order_date, y: val.y});
+                all.push(val);
+            }
+        });
+
+        all.forEach(function (val) {
+            if (val.staff_use == "Delivering") {
+                delivering.push({ label: val.order_date, y: val.y });
+            }
+            else {
+                delivering.push({ label: val.order_date, y: 0 });
+            }
+        });
+        all.forEach(function (val) {
+            if (val.staff_use == "Completed") {
+                complete.push({ label: val.order_date, y: val.y });
+            }
+            else {
+                complete.push({ label: val.order_date, y: 0 });
+            }
+        });
+
+        new CanvasJS.Chart("all", {
+            title: {
+                text: "Product Order Processing"
+            },
+            axisY: {
+                title: ""
+            },
+            data: [
+                {
+                    type: "spline",
+                    name: "Product Order",
+                    showInLegend: true,
+                    dataPoints: arrNew
+                },
+                {
+                    type: "line",
+                    name: "Product Processing",
+                    showInLegend: true,
+                    dataPoints: delivering
+                },
+                {
+                    type: "spline",
+                    name: "Order Completed",
+                    showInLegend: true,
+                    dataPoints: complete
+                }
+            ]
+        }).render(); 
+    });
+</script>

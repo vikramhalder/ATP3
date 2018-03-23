@@ -1,0 +1,7 @@
+li.a{
+    list-style-type: none;  
+} 
+li.a>a{
+    font-size:18px;
+    color:black;
+} 

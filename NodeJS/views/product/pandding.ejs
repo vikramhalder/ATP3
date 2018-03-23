@@ -1,0 +1,112 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",user);-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%>
+
+<style>
+    td {
+        padding: 5px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-2 sidenav">
+            <h4>ALL CATEGORIES</h4>
+            <ul class="nav nav-pills nav-stacked" id="allcatagory">
+                <li><a href="/">All</a></li>
+                <script> 
+                    $.ajax({
+                        type: "Get",
+                        url: "/api/product/catagory",
+                        dataType: 'json',
+                        async: true,
+                        success: function (result) {
+                            var data = JSON.parse(JSON.stringify(result));
+                            data.forEach(function (value) {
+                                if (value.active == "1") {
+                                    var name = value.product_catagory.split(" ").join("/");
+                                    $('#allcatagory').append('<li><a href="/product/' + value.id + '/' + name + '">' + value.product_catagory + '</a></li>');
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </ul>
+        </div>
+
+        <div class="col-sm-10 allitem">
+            <div class="table-container">
+                <table>
+                    <tbody id="tbody">
+                        <script>
+                            $.ajax({
+                                type: "Get",
+                                url: "/api/product/pandding",
+                                dataType: 'json',
+                                async: true,
+                                success: function (result) {
+                                    var data = JSON.parse(JSON.stringify(result)); var color = 0;
+                                    if (data.length > 0) {
+                                        data.forEach(function (list) {
+                                            var backColor = (color % 2 == 0) ? "white" : "#F9F3F3";
+                                            var write = "";
+                                            write += '<tr data-status="pagado" style="background:' + backColor + '">';
+                                            write += '	<td  width="50%">';
+                                            write += '		<div class="media">';
+                                            write += '			<a href="#" class="pull-left">';
+                                            write += '				<img src="/img/product/' + list.product_image + '" width="100px" class="media-photo">';
+                                            write += '			</a>';
+                                            write += '			<div class="media-body">';
+                                            write += '				<h4 class="title">';
+                                            write += '					' + list.product_title;
+                                            write += '				</h4>';
+                                            write += '				<p class="summary">Product Size : ' + list.product_size + '<br>Product Qty  : <kbd>' + list.product_qty + '</kbd><br>Total Amount : <kbd>' + list.product_total_cost + '</kbd><br>' + list.order_date + '<br></p>';
+                                            write += '			</div>';
+                                            write += '		</div>';
+                                            write += '	</td>';
+                                            write += '	<td  width="20%">';
+                                            write += '		<h4>' + list.customer_name + '</h4>';
+                                            write += '		<p>' + list.customer_address + '</p>';
+                                            write += '		<p>' + list.customer_district + '</p>';
+                                            write += '		<p>' + list.customer_phone + '</p>';
+                                            write += '	</td>';
+                                            write += '	<td  width="30%">';
+                                            write += '		<h4> Payment Type : <kbd>' + list.payment_type + '</kbd></h4>';
+                                            write += '		<p> Payment Address: <kbd>' + list.payment_address + '</kbd></p>';
+                                            write += '		<p> Transaction ID : <kbd>' + list.transaction_id + '</kbd></p>';
+                                            write += '		<p> Amount : <kbd>' + list.amount + '</kbd></p>';
+                                            write += '	</td>';
+                                            write += '	<td  width="10%">';
+                                            write += '		<button type="button" class="btn btn-danger">Cancel</button>';
+                                            write += '	</td>';
+                                            write += '</tr> ';
+                                            $("#tbody").append(write);
+                                            color++;
+                                        });
+                                    } else {
+                                        $('.allitem').append('<iframe src="/405" width="100%" height="100%" style="border:none"></iframe>');
+                                    }
+                                }
+                            });
+                        </script>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+
+    document.title = "Order Pandding";
+    function cancelOrder(id, orderID) {
+        if (confirm("Want to Cancel?")) {
+            $.get("/api/product/ordercancel/" + orderID, function (data, status) {
+                if (data == "ok") {
+                    document.getElementById(id).style.display = "none";
+                } else {
+                    alert(data);
+                }
+            });
+        }
+    }
+</script>

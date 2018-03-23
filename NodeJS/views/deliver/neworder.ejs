@@ -1,0 +1,96 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",{user: user});-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%>  
+    
+<div class="container">
+    <div class="container">
+        <div class="col-md-6" style="background:#e9e9e9">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Pro. Id</th>
+                        <th>Order Date</th>
+                        <th>Qty</th>
+                        <th>Address</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <!--Load All Area-->
+                    <script>  
+                    </script>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-11 pull-right from" style="background:#e9e9e9">
+                <div id="message"></div>
+                <div>
+                    <p id="alldetails"> 
+                    </p>
+                </div>
+                <h3>Payment</h3>
+                 
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Due Pay</span>
+                        <input type="number" min="0" readonly class="form-control" id="pay" placeholder="Due Pay" />
+                    </div>
+                </div>
+                <button class="btn btn-success pull-right" onclick="deliverComplete()"> Submit</button><br /><br />
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var orderID = "";
+    var peopleID = "";
+    onloadNewOrder();
+    function onloadNewOrder() {
+        $.get("/api/product/getorder/Delivering", function (data) {
+            data =JSON.parse(JSON.stringify(data));
+            if (data.length > 0) {
+                data.forEach(function (val) { 
+                    $("#tbody").append("<tr><td>" + val.product_id + "</td><td>" + val.order_date + "</td><td>" + val.product_qty + "</td><td>" + val.customer_address + "</td><td><button class='btn btn-info' onclick='viewButton(" + JSON.stringify(val) + ")'>View</button></td></tr>");
+                });
+            } else {
+                $('.col-md-12').append('<iframe src="/405" width="100%" height="50%" style="border:none"></iframe>');
+            }
+        });
+    }
+    function viewButton(val) {
+        var due = (val.product_total_cost - val.success);
+        var x = "";
+        x += '    <br>Name : ' + val.customer_name; 
+        x += '    <br>Address : ' + val.customer_address;
+        x += '    <br>Phone Number : ' + val.customer_phone;
+        x += '    <br>';
+        x += '    <br>Order Id : <kbd>' + val.order_id + '</kbd>';
+        x += '    <br>Total Price : ' + val.product_total_cost;
+        x += '    <br>Payment Method : ' + val.payment_type; 
+        x += '    <br>Paid Amount: ' + val.success;
+        x += '    <br>Due Amount: ' +due;
+        $("#alldetails").html("");
+        $("#alldetails").html(x);
+        $("#pay").val(due);
+        peopleID == val.people_id;
+        orderID = val.order_id; 
+    }
+    function deliverComplete() {
+        var check = true; $("#message").html("");
+        if (orderID.length < 10) { check = false; $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Not Found Order ID</div>'); }
+        if (!isNumber($("#pay").val()) || $("#pay").val().length == 0) { check = false; $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Invalid Payment</div>'); }
+        if (check) {
+            $.post("/api/staff/deliverComplete", { people_id: peopleID, order_id: orderID, amount: $("#pay").val() }, function (data) {
+                if (data == "true") {
+                    orderID = "";
+                    onloadNewOrder(); 
+                    $("#alldetails").html("");
+                    $("#message").append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Order Complete</div>');
+                }
+                else {
+                    $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + data + '</div>');
+                }
+            });
+        }
+    }
+</script>

@@ -1,0 +1,139 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs");-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%> 
+<script>
+    var productdata = <%- JSON.stringify(data) %> 
+</script> 
+<style>
+    td {
+        padding:5px;    
+    }
+</style>
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-2 sidenav">
+            <h4>ALL CATEGORIES</h4>
+            <ul class="nav nav-pills nav-stacked" id="allcatagory">
+                <li><a href="/">All</a></li>
+                <script>  
+                    $.ajax({
+                        type: "Get",
+                        url: "/api/product/catagory",
+                        dataType: 'json',
+                        async: true,
+                        success: function (result) {
+                            var data = JSON.parse(JSON.stringify(result));
+                            data.forEach(function (value) {
+                                if (value.active == "1") {
+                                    var name = value.product_catagory.split(" ").join("/");
+                                    $('#allcatagory').append('<li><a href="/product/' + value.id + '/' + name + '">' + value.product_catagory + '</a></li>');
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </ul>
+        </div>
+
+        <div class="col-sm-8 allitem">  
+             <div class="col-sm-9 pull-right" > 
+                 <div id="errorShow">
+                      
+                 </div>
+	 	         <table id='buyTable' style='width:95%'>   
+                     <tr>    
+                         <td><img src='/img/product/<%=data[0].product_image %>' width='70px' height='70px'></td>    
+                         <td><%=data[0].product_title %></td>    
+                         <td id='pnewPrice'><%=data[0].product_price %></td>  
+                     </tr>
+                  </table>    
+	 	         <center><h3>Delivery Cost For Dhaka 50 TK And Other 100 TK</h3></center>
+	 	         <table style="width: 92%;">   
+                    <tr> 
+                        <td>Full Name</td>
+                        <td><input id="bFullname" name="bFullname" class='form-control' value='<%= user[0].fname%> <%= user[0].lname%>' placeholder="Full Name"></td>
+                    </tr>
+                    <tr>
+                        <td>Select District</td>
+                        <td><select id="distict" name="distict" onchange="chDistict()" class='form-control'><option value='Bagerhat'>Bagerhat</option><option value='Bandarban'>Bandarban</option><option value='Barguna'>Barguna</option><option value='Barisal'>Barisal</option><option value='Bhola'>Bhola</option><option value='Bogra'>Bogra</option><option value='Brahmanbaria'>Brahmanbaria</option><option value='Chandpur'>Chandpur</option><option value='Chapainababganj'>Chapainababganj</option><option value='Chittagong'>Chittagong</option><option value='Chuadanga'>Chuadanga</option><option value='Comilla'>Comilla</option><option value='Cox' s bazar'>Cox's bazar</option><option value='Dhaka'>Dhaka</option><option value='Dinajpur'>Dinajpur</option><option value='Faridpur'>Faridpur</option><option value='Feni'>Feni</option><option value='Gaibandha'>Gaibandha</option><option value='Gazipur'>Gazipur</option><option value='Gopalganj'>Gopalganj</option><option value='Habiganj'>Habiganj</option><option value='Jamalpur'>Jamalpur</option><option value='Jessore'>Jessore</option><option value='Jhalokati'>Jhalokati</option><option value='Jhenaidah'>Jhenaidah</option><option value='Joypurhat'>Joypurhat</option><option value='Khagrachhari'>Khagrachhari</option><option value='Khulna'>Khulna</option><option value='Kishoregonj'>Kishoregonj</option><option value='Kurigram,'>Kurigram,</option><option value='Kushtia'>Kushtia</option><option value='Lakshmipur'>Lakshmipur</option><option value='Lalmonirhat'>Lalmonirhat</option><option value='Madaripur'>Madaripur</option><option value='Magura'>Magura</option><option value='Manikganj'>Manikganj</option><option value='Maulvibazar'>Maulvibazar</option><option value='Meherpur'>Meherpur</option><option value='Munshiganj'>Munshiganj</option><option value='Mymensingh'>Mymensingh</option><option value='Naogaon'>Naogaon</option><option value='Narail'>Narail</option><option value='Narayanganj'>Narayanganj</option><option value='Narsingdi'>Narsingdi</option><option value='Natore'>Natore</option><option value='Netrakona'>Netrakona</option><option value='Nilphamari'>Nilphamari</option><option value='Noakhali'>Noakhali</option><option value='Pabna'>Pabna</option><option value='Panchagarh'>Panchagarh</option><option value='Patuakhali'>Patuakhali</option><option value='Pirojpur  '>Pirojpur  </option><option value='Rajbari'>Rajbari</option><option value='Rajshahi'>Rajshahi</option><option value='Rangamati  '>Rangamati  </option><option value='Rangpur'>Rangpur</option><option value='Satkhira '>Satkhira </option><option value='Shariatpur'>Shariatpur</option><option value='Sherpur'>Sherpur</option><option value='Sirajganj '>Sirajganj </option><option value='Sunamganj'>Sunamganj</option><option value='Sylhet'>Sylhet</option><option value='Tangail '>Tangail </option><option value='Thakurgaon '>Thakurgaon </option> </select></td>
+                    </tr>
+                    <tr>
+                        <td>Full Address</td>
+                        <td><input id="bAddress" name="bAddress" class='form-control' value='<%= user[0].location%>' placeholder="Full Address"></td>
+                    </tr>
+                    <tr>
+                        <td>Phone Number</td>
+                        <td><input id="bPhone" name="bPhone" type="phone" class='form-control' value='' placeholder="Phone Number"></td>
+                    </tr>
+                    <tr>
+                        <td>Product Qty [1-100]</td>
+                        <td><form><input id="bQty" name="bQty" type="number" min="1" max="100" maxlength="100" minlength="1" class='form-control' oninput="Qty(this),deliveryCost(this)" oninvalid="Qty(this)"  placeholder="Product Qty Range[0-100]"></form></td>
+                    </tr>
+                    <tr>
+                        <td>Product Price</td>
+                        <td><input id="bPrice" name="bPrice" type="number" class='form-control' readonly placeholder="Price"></td>
+                    </tr>
+                    <tr>
+                        <td>Total Price</td>
+                        <td><input id="bTPrice" name="bTPrice" type="number" class='form-control' readonly placeholder="Price"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" class='form-control' value="Next" id="next">
+                        </td>
+                    </tr> 
+                </table>  
+	         </div>   
+         </div> 
+        </div>
+    </div>
+</div>
+</body>
+</html>  
+<script>
+    document.title="<%= data[0].product_title%>";
+    function Qty(val){
+        if(parseInt(val.value)>1 && parseInt(val.value)<=100){ 
+        }else{
+            if(val.value==""){
+                val.value=1;  
+            }else{
+                val.value=val.value.substring(0,2);  
+            }
+        }
+        vikID("bPrice").value=val.value*vikID("pnewPrice").innerHTML;
+    }
+    function deliveryCost(val) {
+        var x=val.value*vikID("pnewPrice").innerHTML;
+        if(vikID("distict").value=="Dhaka") { vikID("bTPrice").value=x+50; }
+        else { vikID("bTPrice").value=x+100; }
+    }    function chDistict(){vikID("bTPrice").value="";vikID("bPrice").value="";}    $("#next").click(function(){  
+        var bool=true;
+        $("#errorShow").html("");
+        if ( /^([0-9]{1,3})/.exec($("#bQty").val()) == null) {
+            bool=false;$("#errorShow").append('<div class="alert alert-danger">Product Qty [1-100] : Enter Valid Qty</div>');
+        }if ( /^([a-zA-Z0-9.,]{3,30})/.exec($("#bFullname").val()) == null) {
+            bool=false; $("#errorShow").append('<div class="alert alert-danger">Fullname : Enter Full Name</div>');
+        }if ($("#bAddress").val().length<5) {
+            bool=false; $("#errorShow").append('<div class="alert alert-danger">Address : Enter Address</div>');
+        }if ( /^(^01[0-9]{9,10})|(^\+8801[0-9]{9,10})$/.exec($("#bPhone").val()) == null) {
+            bool=false; $("#errorShow").append('<div class="alert alert-danger">Phone : Enter Valid Phone Number</div>');
+        }
+
+
+        if(bool){
+            $.post("/api/product/whitelist/",
+            {
+                order_id: '<%= user[0].id %>_' + uniqKey(),                 customer_id:"<%= user[0].id %>",                customer_name:$("#bFullname").val(),                customer_address:$("#bAddress").val(),                customer_district:$("#distict").val(),                customer_phone:$("#bPhone").val(),                product_id:"<%= data[0].product_id%>",                product_title:"<%= data[0].product_title%>",                product_qty:$("#bQty").val(),                product_price:$("#bPrice").val(),                product_delivery_cost:$("#bTPrice").val(),                 product_total_cost:$("#bTPrice").val()
+            },
+            function(data, status){
+                if ( /^([0-9]*_[0-9]{8,20})/.exec(data) !== null) {
+                    redirect("/product/buypayment/"+data);
+                }else{
+                    console.log(data);
+                }
+            }); 
+        }
+
+    });      //setCookie("buynow", ""); 
+</script>

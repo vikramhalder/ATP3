@@ -1,0 +1,138 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",{user: user});-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%>  
+<style>
+.error{
+    color:red;
+    text-transform: capitalize; 
+}
+</style>    
+<div class="col-xs-12 col-sm-8 col-md-6"> 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Insert Product Deteils</h3>
+        </div>
+        <div class="panel-body">
+            <form method="post" name="uploadproduct" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label style="color:gray">Select Catagory</label>
+                            <select name="product_catagory" id="product_catagory" class="form-control input-sm"> 
+                                <script>
+                                    $.ajax({
+                                        url: "/api/product/catagory", success: function (result) {
+                                            result.forEach(function (value) { 
+                                                $("#product_catagory").append("<option value='" + value.id + "'>" + value.product_catagory + "</option>");
+                                            });
+                                        }
+                                    });
+                                </script>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label style="color:gray">Product Code</label>
+                            <input type="text"  name="product_code" minlength="3" class="form-control input-sm" placeholder="Product Code" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="color:gray">Product Title</label>
+                    <input type="text" name="product_title" minlength="10" class="form-control input-sm" placeholder="Product Title" required>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label style="color:gray">Product Price</label>
+                            <input type="number"  name="product_price" class="form-control input-sm" placeholder="Product Price" required>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label style="color:gray">Product Discount : <span id='discountPer'>0</span> %</label>
+                            <input type="range" name="product_discount" value="0" class="form-control input-sm" oninput='$("#discountPer").html(this.value)'>
+                        </div>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label style="color:gray">Product Size</label>
+                            <input type="text"  name="product_size" minlength="1" class="form-control input-sm" placeholder="Product Size" required>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label style="color:gray">Product Limit : <span id='rangeLimit'>10</span> Pics</label>
+                            <input type="range" name="product_limit" value="0" max="1000" class="form-control input-sm" required oninput='$("#rangeLimit").html(this.value)'>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group col-xs-12">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-picture"></i></span>
+                        <input type="text" class="form-control input-sm" disabled placeholder="Upload Image">
+                        <span class="input-group-btn"> 
+                            <label class="browse btn btn-primary input-sm" for="product_image" type="button"><i class="glyphicon glyphicon-search"></i> Browse</label>
+                        </span>  
+                    </div>
+                    <input type="file" name="product_image" id="product_image" accept="image/*" class="file" style="visibility: hidden; position: absolute;"> 
+                </div> 
+                <div class="form-group">
+                    <label style="color:gray">Product Discription </label>
+                    <textarea  name="product_discription" minlength="20" class="form-control input-sm" required></textarea>
+                </div>
+                <input type="submit" value="Upload" class="btn btn-info btn-block"> 
+            </form>
+        </div>
+    </div>
+</div>
+<div class="col-xs-12 col-sm-8 col-md-6">
+    <%if (typeof err !== "undefined"){%>
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <%if (typeof err == "string"){%>
+            <%= err %>
+        <%}%>
+        <%if (typeof err !== "string"){
+            err.forEach(function(error){%>
+            <p class="errorMessage"><%= error.message %></p>
+            <%});
+         }%>
+    </div>
+    <%}%>
+    <%if (typeof message !== "undefined"){%>
+    <div class="alert alert-success" role="alert">
+        <strong>Well done!</strong> Upload Successfull
+    </div>
+    <%}%> 
+    <div class="panel panel-default">
+        <center>
+            <img src="#" id="blah" alt="Image Preview" class="col-xs-12" />
+        </center>
+    </div>
+</div>
+</body>
+</html>
+<script>  
+    document.title = "Upload Product";  
+    $("#product_image").change(function () {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+    $(function () { 
+        $("form[name='uploadproduct']").validate({
+            rules: {   
+                submitHandler: function (form) {
+                    form.submit();
+                }
+            }
+        });
+    });
+</script>

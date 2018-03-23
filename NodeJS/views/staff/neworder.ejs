@@ -1,0 +1,102 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",{user: user});-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%>  
+    
+<div class="container">
+    <div class="container">
+        <div class="col-md-6" style="background:#e9e9e9">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Pro. Id</th>
+                        <th>Order Date</th>
+                        <th>Qty</th>
+                        <th>Product Price</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <!--Load All Area-->
+                    <script>
+                        var orderID = "";
+                        $.get("/api/product/getorder/Pandding", function (data) { 
+                            JSON.parse(JSON.stringify(data)).forEach(function (val) {
+                                var x = ""; 
+                                x += '    <br>Name : ' + val.customer_name;
+                                x += '    <br>Phone Number : ' + val.customer_phone;
+                                x += '    <br>Address : ' + val.customer_address;
+                                x +='     <br>';
+                                x += '    <br>Order Id : <kbd>' + val.order_id + '</kbd>';
+                                x += '    <br>Total Price : ' + val.product_total_cost;
+                                x += '    <br>Payment Method : ' + val.payment_type;
+                                x += '    <br>Payment Address : ' + val.payment_address;
+                                x += '    <br>Transaction Id : ' + val.transaction_id;
+                                x += '    <br>Pay Amount: ' + val.amount;
+                                $("#tbody").append("<tr><td>" + val.product_id + "</td><td>" + val.order_date + "</td><td>" + val.product_qty + "</td><td>" + val.product_total_cost + "</td><td><button class='btn btn-info' onclick=\"orderID='" + val.order_id + "' ;$('#alldetails').html('" + x + "')\">View</button></td></tr>");
+                            });
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-11 pull-right from" style="background:#e9e9e9">
+                <div id="message"></div>
+                <div>
+                    <p id="alldetails"> 
+                    </p>
+                </div>
+                <h3>Assign Deliver</h3>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Search Area</span>
+                        <input type="text" class="form-control" oninput="userSearch(this.value)" placeholder="Search area" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon"> Select User&nbsp;</span>
+                        <select id="userid" class="form-control">
+                            <option value="">Select User</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Amount Pay</span>
+                        <input type="number" min="10" class="form-control" id="pay" placeholder="Amount Pay" />
+                    </div>
+                </div>
+                <button class="btn btn-success pull-right" onclick="delivering()"> Submit</button><br /><br />
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function userSearch(val) {
+        $("#userid").html("");
+        $.post("/people/searchuser", { value: val }, function (data) {
+            JSON.parse(JSON.stringify(data)).forEach(function (val) {
+                if (val.type == "Deliver") {
+                    $("#userid").append("<option value='" + val.id + "'>" + val.fname + " " + val.lname + "</option>");
+                }
+            });
+        });
+    }
+    function delivering() {
+        var check = true; $("#message").html("");
+        if (orderID.length < 10) { check = false; $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Not Found Order ID</div>'); }
+        if (!isNumber($("#userid").val()) || $("#userid").val().length == 0) { check = false; $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Select User Is Invalid</div>'); }
+        if (!isNumber($("#pay").val()) || $("#pay").val().length == 0) { check = false; $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Invalid Payment</div>'); }
+        if (check) {
+            $.post("/api/staff/delivering", { order_id: orderID, deliver_id: $("#userid").val(), amount: $("#pay").val() }, function (data) {
+                if (data == "true") {
+                    window.location.reload();
+                }
+                else {
+                    $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+data+'</div>');
+                }
+            });
+        }
+    }
+</script>

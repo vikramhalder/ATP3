@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1b756542-930b-4415-8771-5c619bc4e68d}</ProjectGuid>
+    <ProjectHome />
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Folder Include="controllers\" />
+    <Folder Include="controllers\api\" />
+    <Folder Include="controllers\people\" />
+    <Folder Include="controllers\product\" />
+    <Folder Include="models\" />
+    <Folder Include="models\core\" />
+    <Folder Include="models\data\" />
+    <Folder Include="public\" />
+    <Folder Include="public\bootstrap\" />
+    <Folder Include="public\CSS\" />
+    <Folder Include="public\fonts\" />
+    <Folder Include="public\img\" />
+    <Folder Include="public\img\product\" />
+    <Folder Include="public\img\user\" />
+    <Folder Include="public\JS\" />
+    <Folder Include="views\" />
+    <Folder Include="views\admin\" />
+    <Folder Include="views\error\" />
+    <Folder Include="views\deliver\" />
+    <Folder Include="views\product\" />
+    <Folder Include="views\staff\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="controllers\apiController.js" />
+    <Compile Include="controllers\api\productApiController.js" />
+    <Compile Include="controllers\api\staffApiController.js" />
+    <Compile Include="controllers\adminController.js" />
+    <Compile Include="controllers\people\peopleController.js" />
+    <Compile Include="controllers\product\indexController.js" />
+    <Compile Include="controllers\searchController.js" />
+    <Compile Include="controllers\staffController.js" />
+    <Compile Include="controllers\deliverController.js" />
+    <Compile Include="index.js" />
+    <Compile Include="models\core\staffFactory.js" />
+    <Compile Include="models\core\peopleFactory.js" />
+    <Compile Include="models\core\productFactory.js" />
+    <Compile Include="models\core\rules.js" />
+    <Compile Include="models\core\validetion.js" />
+    <Compile Include="models\data\dataaccessC.js" />
+    <Compile Include="models\data\dataaccessP.js" />
+    <Compile Include="models\data\staffData.js" />
+    <Compile Include="models\data\peopleData.js" />
+    <Compile Include="models\data\productData.js" />
+    <Compile Include="models\data\v.js" />
+    <Compile Include="public\bootstrap\bootstrap.js" />
+    <Compile Include="public\bootstrap\bootstrap.min.js" />
+    <Compile Include="public\bootstrap\jquery.cookie.js" />
+    <Compile Include="public\bootstrap\jquery.min.js" />
+    <Compile Include="public\bootstrap\jquery.validate.min.js" />
+    <Compile Include="public\JS\header.js" />
+    <Compile Include="public\JS\myjs.js" />
+    <Compile Include="public\JS\valid.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="package.json" />
+    <Content Include="public\bootstrap\bootstrap.min.css" />
+    <Content Include="public\bootstrap\bootstrap.min.css.map" />
+    <Content Include="public\bootstrap\Site.css" />
+    <Content Include="public\CSS\allCatagoty.css" />
+    <Content Include="public\CSS\header.css" />
+    <Content Include="public\CSS\style.css" />
+    <Content Include="public\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="public\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="public\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="public\img\del.png" />
+    <Content Include="public\img\Edit.png" />
+    <Content Include="public\img\logo.png" />
+    <Content Include="public\img\product\15_20180305171240.png" />
+    <Content Include="public\img\product\product2017_08_10_23_30_56.png" />
+    <Content Include="public\img\product\product2017_08_11_21_28_04.png" />
+    <Content Include="public\img\product\product2017_08_11_21_29_42.png" />
+    <Content Include="public\img\product\product2017_08_11_21_30_56.png" />
+    <Content Include="public\img\product\product2017_08_11_21_32_34.png" />
+    <Content Include="public\img\product\product2017_08_11_21_34_34.png" />
+    <Content Include="public\img\product\product2017_08_11_21_36_00.png" />
+    <Content Include="public\img\product\product2017_08_21_00_59_50.png" />
+    <Content Include="public\img\product\product2017_08_21_01_01_35.png" />
+    <Content Include="public\img\product\product2017_08_21_01_03_39.png" />
+    <Content Include="public\img\product\product2017_08_21_01_05_17.png" />
+    <Content Include="public\img\product\product2017_08_21_01_06_25.png" />
+    <Content Include="public\img\product\product2017_08_21_01_07_59.png" />
+    <Content Include="public\img\product\product2017_09_16_01_59_35.png" />
+    <Content Include="public\img\profile.png" />
+    <Content Include="public\img\user\default.png" />
+    <Content Include="public\img\user\user14.png" />
+    <Content Include="public\img\user\user15.png" />
+    <Content Include="views\admin\catagory.ejs" />
+    <Content Include="views\admin\employee.ejs" />
+    <Content Include="views\admin\employeeactive.ejs" />
+    <Content Include="views\admin\viewreport.ejs" />
+    <Content Include="views\deliver\neworder.ejs" />
+    <Content Include="views\error\401.ejs" />
+    <Content Include="views\error\404.ejs" />
+    <Content Include="views\error\405.ejs" />
+    <Content Include="views\headerAuth.ejs" />
+    <Content Include="views\headerUnaut.ejs" />
+    <Content Include="views\home.ejs" />
+    <Content Include="views\index.ejs" />
+    <Content Include="views\forgotpassword.ejs" />
+    <Content Include="views\log.ejs" />
+    <Content Include="views\deliver\allorder.ejs" />
+    <Content Include="views\product\buynow.ejs" />
+    <Content Include="views\product\buypayment.ejs" />
+    <Content Include="views\product\ByCatagory.ejs" />
+    <Content Include="views\product\complete.ejs" />
+    <Content Include="views\product\details.ejs" />
+    <Content Include="views\product\pandding.ejs" />
+    <Content Include="views\product\whitelist.ejs" />
+    <Content Include="views\profile.ejs" />
+    <Content Include="views\registration.ejs" />
+    <Content Include="views\search.ejs" />
+    <Content Include="views\staff\allorder.ejs" />
+    <Content Include="views\staff\neworder.ejs" />
+    <Content Include="views\staff\area.ejs" />
+    <Content Include="views\staff\upload.ejs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,66 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",{user: user});-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%>  
+    
+<div class="container">
+    <div class="container">
+        <div class="col-md-12" style="background:#e9e9e9">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Order</th>
+                        <th>Activity</th>
+                        <th>Product Price</th> 
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <!--Load All Area-->
+                    <script> 
+                        $.get("/api/product/getorder/delivering", function (data) {
+                            var color = 0;
+                            JSON.parse(JSON.stringify(data)).forEach(function (list) {
+                                var backColor = (color % 2 == 0) ? "white" : "#F9F3F3";
+                                var write = "";
+                                write += '<tr data-status="pagado" style="background:' + backColor + '" id="ID' + list.order_id + '">';
+                                write += '	<td  width="40%">';
+                                write += '		<div class="media">';
+                                write += '			<a href="#" class="pull-left">';
+                                write += '				<img src="/img/product/' + list.product_image + '" width="100px" class="media-photo">';
+                                write += '			</a>';
+                                write += '			<div class="media-body">';
+                                write += '				<h4 class="title">';
+                                write += '					' + list.product_title;
+                                write += '				</h4>';
+                                write += '				<p class="summary">Product Size : ' + list.product_size + '<br>Product Qty  : ' + list.product_qty + '<br>Total Amount : ' + list.product_total_cost + '<br>' + list.order_date + '<br></p>';
+                                write += '			</div>';
+                                write += '		</div>';
+                                write += '	</td>';
+                                write += '	<td  width="20%">';
+                                write += '		<h4>' + list.customer_name + '</h4>';
+                                write += '		<p>' + list.customer_address + '</p>';
+                                write += '		<p>' + list.customer_district + '</p>';
+                                write += '		<p>' + list.customer_phone + '</p>';
+                                write += '	</td>';
+                                write += '	<td  width="10%">';
+                                write += '		<h4><kbd>' + list.staff_use + '</kbd></h4>';
+                                write += '		<p> Deliver : ' + list.deliver_id + '</p>'; 
+                                write += '	</td>';
+                                write += '	</td>';
+                                write += '	<td  width="30%">';
+                                write += '		<h4>' + list.payment_type + '</h4>';
+                                write += '		<p> Phone/Email : ' + list.payment_address + '</p>';
+                                write += '		<p> Trans ID : ' + list.transaction_id + '</p>';
+                                write += '		<p> Pay : ' + list.success + '</p>';
+                                write += '	</td>';
+                                write += '	</td>';
+                                write += '</tr> ';
+                                $("#tbody").append(write);
+                                color++;
+                            });
+                        });
+                    </script>
+                </tbody>
+            </table> 
+        </div>
+    </div>
+</div> 

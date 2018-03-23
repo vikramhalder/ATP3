@@ -1,0 +1,166 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",user);-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%> 
+ 
+<style>
+    td {
+        padding:5px;    
+    }
+</style>
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-2 sidenav">
+            <h4>ALL CATEGORIES</h4>
+            <ul class="nav nav-pills nav-stacked" id="allcatagory">
+                <li><a href="/">All</a></li>
+                <script>  
+                    $.ajax({
+                        type: "Get",
+                        url: "/api/product/catagory",
+                        dataType: 'json',
+                        async: true,
+                        success: function (result) {
+                            var data = JSON.parse(JSON.stringify(result));
+                            data.forEach(function (value) {
+                                if (value.active == "1") {
+                                    var name = value.product_catagory.split(" ").join("/");
+                                    $('#allcatagory').append('<li><a href="/product/' + value.id + '/' + name + '">' + value.product_catagory + '</a></li>');
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </ul>
+        </div>
+
+        <div class="col-sm-8 allitem">
+            <div class="col-sm-12">
+                <div class="col-sm-6">
+                    <div style="background:#FAF7F7;border-style: dotted;padding:15px">
+                        <input type="radio" checked /> Online<br />
+                        <h5>
+                            <%= data[0].customer_name %><br>
+                            <%= user[0].email %><br>
+                            <%= data[0].customer_phone %><br>
+                            <%= data[0].customer_address %><br>
+                            <%= data[0].customer_district %>
+                        </h5>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div style="background:#FAF7F7;border-style: dotted;padding:15px">
+                        <input type="radio" checked /> Online<br />
+                        <h5>
+                            Product Order<br>
+                            Qty : <%= data[0].product_qty %><br>
+                            Product Price: <%= (data[0].product_price/data[0].product_qty) %><br>
+                            Delivery Cost: <%= (data[0].product_total_cost-data[0].product_price) %><br>
+                            Total Price: <%= data[0].product_total_cost %><br>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12"> 
+                <div class="row" style="padding:5px 20px"> 
+                    <h4>Payment Method</h4>
+                    <div id="errorShow"></div>
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#bkash">bKash</a></li>
+                        <li><a data-toggle="tab" href="#payza">Payza</a></li>
+                        <li><a data-toggle="tab" href="#visa">Debit or Credit Card</a></li>
+                        <li><a data-toggle="tab" href="#cashOn">Cash On Delivery</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="bkash" class="tab-pane fade in active">
+                            <ul>
+                                <h3>Instructions:</h3>
+                                <li>Start bKash Mobile menu by dialing *247#</li>
+                                <li>Choose Payment</li>
+                                <li>Enter Shopzoon bKash account number: 01234567890</li>
+                                <li>Enter the amount <%= data[0].product_total_cost %> tk you would like to send</li>
+                                <li>Enter a reference about the transaction</li>
+                                <li>Enter the bKash Mobile Menu Pin to Confirm</li>
+                                <li>Finally, enter the bKash transaction ID returned below</li>
+
+                                <h4>bKash Transaction Id</h4>
+                                <input style='width:250px;height:30px' id='phoneBK' placeholder='Your Phone Number'>
+                                <br>
+                                <input style='width:250px;height:30px' id='transactionBK' placeholder='Transaction ID'>
+                                <br>
+                                <br>
+                                <input type='submit' class='btn btn-primary' value='Confirm' onclick='payment("bKash", $("#phoneBK").val(), $("#transactionBK").val())'>
+                            </ul>
+                        </div>
+                        <div id="payza" class="tab-pane fade">
+                            <ul>
+                                <h3>Instructions:</h3>
+                                <li>Log In Payza Account</li>
+                                <li>Go to <a href='https://secure.payza.com/SendMoney.aspx'>https://secure.payza.com/SendMoney.aspx</a></li>
+                                <li>Enter Payza Email Addres: shopzoon@email.com</li>
+                                <li>Select Currency Banladesh Taka</li>
+                                <li>Amount <%= data[0].product_total_cost %> TK</li>
+                                <li>Select Purchase Type Goods</li>
+                                <li>Click Confirm</li>
+                                <h4>Payza Transaction Id</h4>
+                                <input style='width:250px;height:30px' id='phonePA' placeholder='Your Email Address'>
+                                <br>
+                                <input style='width:250px;height:30px' id='transactionPA' placeholder='Transaction ID'>
+                                <br>
+                                <br>
+                                <input type='submit' class='btn btn-lg btn-primary' value='Confirm' onclick='payment("Payza", $("#phonePA").val(), $("#transactionPA").val())'>
+                            </ul>
+                        </div>
+                        <div id="visa" class="tab-pane fade">
+                            <ul>
+                                <h4>Not Avabile</h4>
+                            </ul>
+                        </div>
+                        <div id="cashOn" class="tab-pane fade">
+                            <ul>
+                                <h4>Are You Ready to Confirm?</h4> 
+                                <input type='submit' class='btn btn-lg btn-primary' value='Confirm' onclick='payment("cashOn")'>
+                            </ul> 
+                        </div>
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>
+</body>
+</html>  
+<script>      document.title = "Payment Method";
+    function payment(type, paAddress, transID) { 
+        var bool = true; $("#errorShow").html("");
+        if (type == "cashOn") {
+            type = "Cash On Delivery"; paAddress = "Cash On Delivery"; transID = "Cash On Delivery";
+        }if (type == "bKash" && /^(^01[0-9]{9,10})|(^\+8801[0-9]{9,10})$/.exec(paAddress) == null) {
+            bool = false; $("#errorShow").append('<div class="alert alert-danger">Invalid Phone</div>');
+        }if (type == "Payza" && /^[a-z0-9._]+@[a-z0-9_]+?\.[a-z]{2,5}$/.exec(paAddress) == null) {
+            bool = false; $("#errorShow").append('<div class="alert alert-danger">Invalid Email</div>');
+        }if (transID.length<5) {
+            bool = false; $("#errorShow").append('<div class="alert alert-danger">Invalid Transaction Id</div>');
+        }
+
+        if (bool) {
+            $.post("/api/product/postpayment/<%= data[0].order_id %>",
+                {
+                    product_id: "<%= data[0].product_id %>",                    payment_type: type,                    payment_address: paAddress,                    transaction_id: transID,
+                    amount: "<%= data[0].product_total_cost %>"
+                },
+                function (data, status) {
+                    if (data == "Payment Update Seccessfully") {
+                        console.log(data);
+                        var socket = io.connect("http://localhost:5000", { 'force new connection': true });
+                        socket.emit('new order_payment', {vv:"jj"});  
+                        setTimeout(function () {
+                            redirect("/product/pandding/");
+                        }, 2000);
+                    } else {
+                        $("#errorShow").append('<div class="alert alert-danger">' + data + '</div>');
+                    }
+                }
+            );
+        }
+    }
+</script>

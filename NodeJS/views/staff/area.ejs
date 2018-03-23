@@ -1,0 +1,88 @@
+﻿<%  if (typeof user == 'object' && user){%><%-include("../headerAuth.ejs",{user: user});-%><%}%>
+<%  if(user == null){%><%-include("../headerUnaut.ejs");-%><%}%>  
+    
+    <div class="container">
+        <div class="col-md-6" style="background:#e9e9e9">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Area</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">  
+                    <!--Load All Area-->
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">  
+            <div class="col-md-11 pull-right from" style="background:#e9e9e9">
+                <div id="message"></div>
+                <h3>Assign Deliver Area</h3> 
+                
+                <div class="form-group"> 
+                    <div class="input-group">
+                        <span class="input-group-addon">Search User</span>
+                        <input type="text" class="form-control" oninput="userSearch(this.value)" placeholder="Search By [ ID Name Email ]" />
+                    </div> 
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon"> Select User </span>
+                        <select id="userid" class="form-control">
+                            <option value="">Select User</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Assign Area</span>
+                        <input type="text" class="form-control" id="area" placeholder="Assign Area" />
+                    </div>
+                </div>
+                <button class="btn btn-success pull-right" onclick="saveArea()"> Save Area</button><br /><br />
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>   
+    loadArea();
+    function loadArea() {
+        $.get("/api/staff/area", function (data) {
+            $("#tbody").html("");
+            JSON.parse(JSON.stringify(data)).forEach(function (val) { 
+                $("#tbody").append("<tr><td>" + val.id + "</td><td>" + val.fname + " " + val.lname + "</td><td>" + val.area + "</td></tr>");
+            });
+        });
+    }
+    function userSearch(val) {
+        $("#userid").html("");
+        $.post("/people/searchuser", { value: val }, function (data) { 
+            JSON.parse(JSON.stringify(data)).forEach(function (val) {
+                if (val.type == "Deliver") {
+                    $("#userid").append("<option value='" + val.id + "'>" + val.fname + " " + val.lname + "</option>");
+                }
+            });
+        });
+    }
+    
+    function saveArea() {
+        var check = true; $("#message").html("");
+        if ($("#area").val().length < 2) { check = false; $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Area At Least 3 Char</div>'); }
+        if (!isNumber($("#userid").val()) || $("#userid").val().length ==0) {check = false; $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Select User Is Invalid</div>'); }
+        if (check) {
+            $.post("/api/staff/areapost", { id: $("#userid").val(), area: $("#area").val() }, function (data, state) {
+                if (data == "true") {
+                    //loadArea();
+                    var socket = io.connect("http://localhost:5000", { 'force new connection': true });
+                    socket.emit('notification', { deliverID: $("#userid").val(), Browser: browserName() });
+                } else {
+                    $("#message").append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+data+'</div>');
+                } 
+            });
+            
+        }
+    } 
+</script>
