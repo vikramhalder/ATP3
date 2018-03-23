@@ -1,0 +1,15 @@
+.cont{height:100%;width: 100%;}
+.part1 {float:left;height:740px;background:none;border-right:2px solid #f2f2f2}
+.part2 {float:left;background:none;}   
+.part2 .Cat{width:100%;height: auto;background:none;font-size: 30px;text-align: center;}
+
+.productFormInputT{
+    max-width: 100%;
+    min-width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}

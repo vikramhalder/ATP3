@@ -1,0 +1,69 @@
+@include('header')
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-2 sidenav">
+            <h4>ALL CATEGORIES</h4>
+            <ul class="nav nav-pills nav-stacked" id="allcatagory">
+                <li class="active"><a href="/">All</a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-10 allitem">
+            <div id="allproduct">
+                <!--JSON DATA-->
+            </div>
+            <div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    document.title = "ShopZoon";
+    ///For Catagory
+    $.ajax({
+        type: "Get",
+        url: "/api/product/catagory",
+        dataType: 'json',
+        async: true,
+        success: function (result) {
+            var data = JSON.parse(JSON.stringify(result));
+            data.forEach(function (value) {
+                if (value.active == "1") {
+                    var name = value.product_catagory.split(" ").join("/");
+                    $('#allcatagory').append('<li><a href="/product/' + value.id + '/' + name + '">' + value.product_catagory + '</a></li>');
+                }
+            });
+        }
+    });
+
+    ///For All Product
+    $.ajax({
+        type: "Get",
+        url: "/api/product/all",
+        dataType: 'json',
+        async: true,
+        success: function (result) {
+            var data = JSON.parse(JSON.stringify(result));
+            data.forEach(function (value) {
+                var write = "";
+                write += '<div class="col-sm-4 stylish-panel" style="height:350px;padding:10px;cursor:pointer" onclick="redirect(\'/product/details/' + value.product_id + '\')">';
+                write += ' <div>';
+                write +='   <div class="col-sm-12" style="background-color:white;height:100%">';
+                write +='      <div style="height:270px; overflow: hidden;">';
+                write +='          <img src="/img/product/' + value.product_image + '" width="100%" />';
+                write +='      </div> ';
+                write +='      <center>';
+                write += '         <font class="pTitle">' + value.product_title.substring(0, 30) + '</font><br />';
+                write +='          <font class="pTK">TK ' + value.product_price + '</font>';
+                write +='      </center> ';
+                write += '   </div>';
+                write += ' </div>';
+                write += '</div>';
+                $('#allproduct').append(write);
+            });
+        }
+    });
+</script>
